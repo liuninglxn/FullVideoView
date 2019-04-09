@@ -47,7 +47,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     public static boolean TOOL_BAR_EXIST = true;
     public static int FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
     public static int NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;//过一遍demo
-    public static boolean SAVE_PROGRESS = true;
+    public static boolean SAVE_PROGRESS = false;//是否从上次观看点继续观看
     public static boolean WIFI_TIP_DIALOG_SHOWED = false;
     public static int VIDEO_IMAGE_DISPLAY_TYPE = 0;
     public static long lastAutoFullscreenTime = 0;
@@ -63,14 +63,6 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                     Log.d(TAG, "AUDIOFOCUS_LOSS [" + this.hashCode() + "]");
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-//                    try {
-//                        Jzvd player = JzvdMgr.getCurrentJzvd();
-//                        if (player != null && player.currentState == Jzvd.CURRENT_STATE_PLAYING) {
-//                            player.startButton.performClick();
-//                        }
-//                    } catch (IllegalStateException e) {
-//                        e.printStackTrace();
-//                    }
                     Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT [" + this.hashCode() + "]");
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
@@ -92,7 +84,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     public int widthRatio = 0;
     public int heightRatio = 0;
     public UUDataSource jzDataSource;
-    public int positionInList = -1;//很想干掉它
+    public int positionInList = -1;
     public int videoRotation = 0;
     public UUMediaInterface mediaInterface;
     public UUTextureView textureView;
@@ -112,7 +104,6 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     protected int mGestureDownVolume;
     protected float mGestureDownBrightness;
     protected long mSeekTimePosition;
-    //liestview中，退出全屏也会导致列表getview->setUp，这个变量要屏蔽这个过程
     protected long gobakFullscreenTime = 0;
 
     public UUvideo(Context context) {
@@ -134,7 +125,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     }
 
     public static void clearSavedProgress(Context context, String url) {
-        UUUtils.clearSavedProgress(context, url);
+        UUUtils.INSTANCE.clearSavedProgress(context, url);
     }
 
     public static void goOnPlayOnResume() {
@@ -214,9 +205,9 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     }
 
     public static void startFullscreenDirectly(Context context, Class _class, UUDataSource uuDataSource) {
-        UUUtils.hideStatusBar(context);
-        UUUtils.setRequestedOrientation(context, FULLSCREEN_ORIENTATION);
-        ViewGroup vp = (ViewGroup) UUUtils.scanForActivity(context).getWindow().getDecorView();
+        UUUtils.INSTANCE.hideStatusBar(context);
+        UUUtils.INSTANCE.setRequestedOrientation(context, FULLSCREEN_ORIENTATION);
+        ViewGroup vp = (ViewGroup) UUUtils.INSTANCE.scanForActivity(context).getWindow().getDecorView();
         try {
             Constructor<UUvideo> constructor = _class.getConstructor(Context.class);
             final UUvideo jzvd = constructor.newInstance(context);
@@ -301,7 +292,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
             if (currentState == CURRENT_STATE_NORMAL) {
                 if (!jzDataSource.getCurrentUrl().toString().startsWith("file") && !
                         jzDataSource.getCurrentUrl().toString().startsWith("/") &&
-                        !UUUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {//这个可以放到std中
+                        !UUUtils.INSTANCE.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {//这个可以放到std中
                     showWifiDialog();
                     return;
                 }
@@ -367,7 +358,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                                     //如果y轴滑动距离超过设置的处理范围，那么进行滑动事件处理
                                     if (mDownX < mScreenWidth * 0.5f) {//左侧改变亮度
                                         mChangeBrightness = true;
-                                        WindowManager.LayoutParams lp = UUUtils.getWindow(getContext()).getAttributes();
+                                        WindowManager.LayoutParams lp = UUUtils.INSTANCE.getWindow(getContext()).getAttributes();
                                         if (lp.screenBrightness < 0) {
                                             try {
                                                 mGestureDownBrightness = Settings.System.getInt(getContext().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
@@ -392,8 +383,8 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                         mSeekTimePosition = (int) (mGestureDownPosition + deltaX * totalTimeDuration / mScreenWidth);
                         if (mSeekTimePosition > totalTimeDuration)
                             mSeekTimePosition = totalTimeDuration;
-                        String seekTime = UUUtils.stringForTime(mSeekTimePosition);
-                        String totalTime = UUUtils.stringForTime(totalTimeDuration);
+                        String seekTime = UUUtils.INSTANCE.stringForTime(mSeekTimePosition);
+                        String totalTime = UUUtils.INSTANCE.stringForTime(totalTimeDuration);
 
                         showProgressDialog(deltaX, seekTime, mSeekTimePosition, totalTime, totalTimeDuration);
                     }
@@ -410,7 +401,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                     if (mChangeBrightness) {
                         deltaY = -deltaY;
                         int deltaV = (int) (255 * deltaY * 3 / mScreenHeight);
-                        WindowManager.LayoutParams params = UUUtils.getWindow(getContext()).getAttributes();
+                        WindowManager.LayoutParams params = UUUtils.INSTANCE.getWindow(getContext()).getAttributes();
                         if (((mGestureDownBrightness + deltaV) / 255) >= 1) {//这和声音有区别，必须自己过滤一下负值
                             params.screenBrightness = 1;
                         } else if (((mGestureDownBrightness + deltaV) / 255) <= 0) {
@@ -418,7 +409,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                         } else {
                             params.screenBrightness = (mGestureDownBrightness + deltaV) / 255;
                         }
-                        UUUtils.getWindow(getContext()).setAttributes(params);
+                        UUUtils.INSTANCE.getWindow(getContext()).setAttributes(params);
                         //dialog中显示百分比
                         int brightnessPercent = (int) (mGestureDownBrightness * 100 / 255 + deltaY * 3 * 100 / mScreenHeight);
                         showBrightnessDialog(brightnessPercent);
@@ -453,7 +444,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         addTextureView();
         AudioManager mAudioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-        UUUtils.scanForActivity(getContext()).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        UUUtils.INSTANCE.scanForActivity(getContext()).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         onStatePreparing();
     }
@@ -544,7 +535,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
             mediaInterface.seekTo(seekToInAdvance);
             seekToInAdvance = 0;
         } else {
-            long position = UUUtils.getSavedProgress(getContext(), jzDataSource.getCurrentUrl());
+            long position = UUUtils.INSTANCE.getSavedProgress(getContext(), jzDataSource.getCurrentUrl());
             if (position != 0) {
                 mediaInterface.seekTo(position);
             }
@@ -618,15 +609,15 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         dismissVolumeDialog();
         onStateAutoComplete();
         mediaInterface.release();
-        UUUtils.scanForActivity(getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        UUUtils.saveProgress(getContext(), jzDataSource.getCurrentUrl(), 0);
+        UUUtils.INSTANCE.scanForActivity(getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        UUUtils.INSTANCE.saveProgress(getContext(), jzDataSource.getCurrentUrl(), 0);
     }
 
     public void reset() {
         Log.i(TAG, "reset " + " [" + this.hashCode() + "] ");
         if (currentState == CURRENT_STATE_PLAYING || currentState == CURRENT_STATE_PAUSE) {
             long position = getCurrentPositionWhenPlaying();
-            UUUtils.saveProgress(getContext(), jzDataSource.getCurrentUrl(), position);
+            UUUtils.INSTANCE.saveProgress(getContext(), jzDataSource.getCurrentUrl(), position);
         }
         cancelProgressTimer();
         dismissBrightnessDialog();
@@ -638,7 +629,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
 
         AudioManager mAudioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
-        UUUtils.scanForActivity(getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        UUUtils.INSTANCE.scanForActivity(getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mediaInterface.release();
     }
 
@@ -657,20 +648,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     }
 
     public void clearFloatScreen() {
-//        UUUtils.setRequestedOrientation(getContext(), NORMAL_ORIENTATION);
-////        showStatusBar(getContext());
-//        ViewGroup vp = (UUUtils.scanForActivity(getContext()))//.getWindow().getDecorView();
-//                .findViewById(Window.ID_ANDROID_CONTENT);
-//        Jzvd fullJzvd = vp.findViewById(R.id.jz_fullscreen_id);
-//        Jzvd tinyJzvd = vp.findViewById(R.id.jz_tiny_id);
-//
-//        if (fullJzvd != null) {
-//            vp.removeView(fullJzvd);
-//        }
-//        if (tinyJzvd != null) {
-//            vp.removeView(tinyJzvd);
-//        }
-//        JzvdMgr.setSecondFloor(null);
+
     }
 
     public void onVideoSizeChanged(int width, int height) {
@@ -713,8 +691,8 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                 if (progress != 0) progressBar.setProgress(progress);
             }
         }
-        if (position != 0) currentTimeTextView.setText(UUUtils.stringForTime(position));
-        totalTimeTextView.setText(UUUtils.stringForTime(duration));
+        if (position != 0) currentTimeTextView.setText(UUUtils.INSTANCE.stringForTime(position));
+        totalTimeTextView.setText(UUUtils.INSTANCE.stringForTime(duration));
     }
 
     public void setBufferProgress(int bufferProgress) {
@@ -724,8 +702,8 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     public void resetProgressAndTime() {
         progressBar.setProgress(0);
         progressBar.setSecondaryProgress(0);
-        currentTimeTextView.setText(UUUtils.stringForTime(0));
-        totalTimeTextView.setText(UUUtils.stringForTime(0));
+        currentTimeTextView.setText(UUUtils.INSTANCE.stringForTime(0));
+        totalTimeTextView.setText(UUUtils.INSTANCE.stringForTime(0));
     }
 
     public long getCurrentPositionWhenPlaying() {
@@ -789,7 +767,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         if (fromUser) {
             //设置这个progres对应的时间，给textview
             long duration = getDuration();
-            currentTimeTextView.setText(UUUtils.stringForTime(progress * duration / 100));
+            currentTimeTextView.setText(UUUtils.INSTANCE.stringForTime(progress * duration / 100));
         }
     }
 
@@ -797,20 +775,20 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         ViewGroup vg = (ViewGroup) getParent();
         vg.removeView(this);
         CONTAINER_LIST.add(vg);
-        vg = (ViewGroup) (UUUtils.scanForActivity(getContext())).getWindow().getDecorView();//和他也没有关系
+        vg = (ViewGroup) (UUUtils.INSTANCE.scanForActivity(getContext())).getWindow().getDecorView();//和他也没有关系
         vg.addView(this, new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         setScreenFullscreen();
-        UUUtils.hideStatusBar(getContext());
-        UUUtils.setRequestedOrientation(getContext(), FULLSCREEN_ORIENTATION);
-        UUUtils.hideSystemUI(getContext());//华为手机和有虚拟键的手机全屏时可隐藏虚拟键 issue:1326
+        UUUtils.INSTANCE.hideStatusBar(getContext());
+        UUUtils.INSTANCE.setRequestedOrientation(getContext(), FULLSCREEN_ORIENTATION);
+        UUUtils.INSTANCE.hideSystemUI(getContext());//华为手机和有虚拟键的手机全屏时可隐藏虚拟键 issue:1326
 
     }
 
     public void gotoScreenNormal() {//goback本质上是goto
         gobakFullscreenTime = System.currentTimeMillis();//退出全屏
-        ViewGroup vg = (ViewGroup) (UUUtils.scanForActivity(getContext())).getWindow().getDecorView();
+        ViewGroup vg = (ViewGroup) (UUUtils.INSTANCE.scanForActivity(getContext())).getWindow().getDecorView();
         vg.removeView(this);
         CONTAINER_LIST.getLast().removeAllViews();
         CONTAINER_LIST.getLast().addView(this, new LayoutParams(
@@ -818,13 +796,13 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         CONTAINER_LIST.pop();
 
         setScreenNormal();//这块可以放到jzvd中
-        UUUtils.showStatusBar(getContext());
-        UUUtils.setRequestedOrientation(getContext(), NORMAL_ORIENTATION);
+        UUUtils.INSTANCE.showStatusBar(getContext());
+        UUUtils.INSTANCE.setRequestedOrientation(getContext(), NORMAL_ORIENTATION);
 //            CURRENT_JZVD.setSystemUiVisibility(
 //                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 //                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 //                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);//华为手机和有虚拟键的手机全屏时可隐藏虚拟键 issue:1326
-        UUUtils.showSystemUI(getContext());
+        UUUtils.INSTANCE.showSystemUI(getContext());
     }
 
     public void setScreenNormal() {
@@ -846,9 +824,9 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                 && currentScreen != SCREEN_WINDOW_FULLSCREEN
                 && currentScreen != SCREEN_WINDOW_TINY) {
             if (x > 0) {
-                UUUtils.setRequestedOrientation(getContext(), ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                UUUtils.INSTANCE.setRequestedOrientation(getContext(), ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             } else {
-                UUUtils.setRequestedOrientation(getContext(), ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                UUUtils.INSTANCE.setRequestedOrientation(getContext(), ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             }
             gotoScreenFullscreen();
         }
