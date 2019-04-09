@@ -10,7 +10,6 @@ import android.view.Surface
 import androidx.annotation.RequiresApi
 
 /**
- * Created by Nathen on 2017/11/8.
  * 实现系统的播放引擎
  */
 class UUMediaSystem(jzvd: UUvideo) : UUMediaInterface(jzvd), MediaPlayer.OnPreparedListener,

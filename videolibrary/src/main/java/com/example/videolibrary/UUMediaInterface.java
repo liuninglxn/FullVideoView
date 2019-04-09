@@ -6,7 +6,6 @@ import android.os.HandlerThread;
 import android.view.TextureView;
 
 /**
- * Created by Nathen on 2017/11/7.
  * 自定义播放器
  */
 public abstract class UUMediaInterface implements TextureView.SurfaceTextureListener {

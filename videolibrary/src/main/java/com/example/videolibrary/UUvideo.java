@@ -19,11 +19,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Created by Nathen on 16/7/30.
+ *
  */
 public abstract class UUvideo extends FrameLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
 
-    public static final String TAG = "JZVD";
+    public static final String TAG = "UUVideo";
     public static final int THRESHOLD = 80;
 
     public static final int SCREEN_NORMAL = 0;
@@ -46,7 +46,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     public static final int VIDEO_IMAGE_DISPLAY_TYPE_ORIGINAL = 3;
     public static boolean TOOL_BAR_EXIST = true;
     public static int FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
-    public static int NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;//过一遍demo
+    public static int NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
     public static boolean SAVE_PROGRESS = false;//是否从上次观看点继续观看
     public static boolean WIFI_TIP_DIALOG_SHOWED = false;
     public static int VIDEO_IMAGE_DISPLAY_TYPE = 0;
@@ -191,9 +191,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
 
     public static boolean backPress() {
         Log.i(TAG, "backPress");
-//        if ((System.currentTimeMillis() - CLICK_QUIT_FULLSCREEN_TIME) < FULL_SCREEN_NORMAL_DELAY)
-//            return false; 这些东西遇到了再改，最后过代码的时候删除残留
-        if (CONTAINER_LIST.size() != 0 && CURRENT_JZVD != null) {//判断条件，因为当前所有goBack都是回到普通窗口
+        if (CONTAINER_LIST.size() != 0 && CURRENT_JZVD != null) {//回到普通窗口
             CURRENT_JZVD.gotoScreenNormal();
             return true;
         }
@@ -285,7 +283,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         int i = v.getId();
         if (i == R.id.start) {
             Log.i(TAG, "onClick start [" + this.hashCode() + "] ");
-            if (jzDataSource == null || jzDataSource.urlsMap.isEmpty() || jzDataSource.getCurrentUrl() == null) {
+            if (jzDataSource == null || jzDataSource.getUrlsMap().isEmpty() || jzDataSource.getCurrentUrl() == null) {
                 Toast.makeText(getContext(), getResources().getString(R.string.no_url), Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -515,7 +513,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     public void changeUrl(int urlMapIndex, long seekToInAdvance) {
         currentState = CURRENT_STATE_PREPARING_CHANGING_URL;
         this.seekToInAdvance = seekToInAdvance;
-        jzDataSource.currentUrlIndex = urlMapIndex;
+        jzDataSource.setCurrentUrlIndex(urlMapIndex);
         mediaInterface.prepare();
     }
 
@@ -795,13 +793,9 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         CONTAINER_LIST.pop();
 
-        setScreenNormal();//这块可以放到jzvd中
+        setScreenNormal();
         UUUtils.INSTANCE.showStatusBar(getContext());
         UUUtils.INSTANCE.setRequestedOrientation(getContext(), NORMAL_ORIENTATION);
-//            CURRENT_JZVD.setSystemUiVisibility(
-//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);//华为手机和有虚拟键的手机全屏时可隐藏虚拟键 issue:1326
         UUUtils.INSTANCE.showSystemUI(getContext());
     }
 

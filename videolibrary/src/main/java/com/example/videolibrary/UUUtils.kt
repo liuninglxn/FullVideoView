@@ -44,7 +44,6 @@ object UUUtils {
 
     /**
      * This method requires the caller to hold the permission ACCESS_NETWORK_STATE.
-     *
      * @param context context
      * @return if wifi is connected,return true
      */
@@ -56,7 +55,6 @@ object UUUtils {
 
     /**
      * Get activity from context object
-     *
      * @param context context
      * @return object of Activity or null if it is not Activity
      */
@@ -74,7 +72,6 @@ object UUUtils {
 
     /**
      * Get AppCompatActivity from context
-     *
      * @param context context
      * @return AppCompatActivity if it's not null
      */
@@ -135,7 +132,6 @@ object UUUtils {
 
     /**
      * if url == null, clear all progress
-     *
      * @param context context
      * @param url     if url!=null clear this url progress
      */
@@ -187,11 +183,6 @@ object UUUtils {
 
     @SuppressLint("NewApi")
     fun showSystemUI(context: Context) {
-        //        view.setSystemUiVisibility(
-        //                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        //                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        //                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-
         val uiOptions = View.SYSTEM_UI_FLAG_VISIBLE
         Toast.makeText(context, "fjdkslfdska $SYSTEM_UI", Toast.LENGTH_SHORT).show()
         UUUtils.getWindow(context).decorView.systemUiVisibility = SYSTEM_UI

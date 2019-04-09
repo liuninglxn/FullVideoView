@@ -113,7 +113,7 @@ public class UUabcVideoView extends UUvideo {
 
     public void setUp(UUDataSource jzDataSource, int screen, UUMediaInterface jzMediaInterface) {
         super.setUp(jzDataSource, screen, jzMediaInterface);
-        titleTextView.setText(jzDataSource.title);
+        titleTextView.setText(jzDataSource.getTitle());
         setScreen(screen);
     }
 
@@ -152,7 +152,7 @@ public class UUabcVideoView extends UUvideo {
         backButton.setVisibility(View.VISIBLE);
         tinyBackImageView.setVisibility(View.INVISIBLE);
         batteryTimeLayout.setVisibility(View.VISIBLE);
-        if (jzDataSource.urlsMap.size() == 1) {
+        if (jzDataSource.getUrlsMap().size() == 1) {
             clarity.setVisibility(GONE);
         } else {
             clarity.setText(jzDataSource.getCurrentKey().toString());
@@ -195,7 +195,7 @@ public class UUabcVideoView extends UUvideo {
     @Override
     public void changeUrl(UUDataSource jzDataSource, long seekToInAdvance) {
         super.changeUrl(jzDataSource, seekToInAdvance);
-        titleTextView.setText(jzDataSource.title);
+        titleTextView.setText(jzDataSource.getTitle());
         startButton.setVisibility(INVISIBLE);
         replayTextView.setVisibility(View.GONE);
         mRetryLayout.setVisibility(View.GONE);
@@ -267,7 +267,7 @@ public class UUabcVideoView extends UUvideo {
         super.onClick(v);
         int i = v.getId();
         if (i == R.id.thumb) {
-            if (jzDataSource == null || jzDataSource.urlsMap.isEmpty() || jzDataSource.getCurrentUrl() == null) {
+            if (jzDataSource == null || jzDataSource.getUrlsMap().isEmpty() || jzDataSource.getCurrentUrl() == null) {
                 Toast.makeText(getContext(), getResources().getString(R.string.no_url), Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -299,7 +299,7 @@ public class UUabcVideoView extends UUvideo {
                 changeUrl(index, getCurrentPositionWhenPlaying());
                 clarity.setText(jzDataSource.getCurrentKey().toString());
                 for (int j = 0; j < layout.getChildCount(); j++) {//设置点击之后的颜色
-                    if (j == jzDataSource.currentUrlIndex) {
+                    if (j == jzDataSource.getCurrentUrlIndex()) {
                         ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#fff85959"));
                     } else {
                         ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#ffffff"));
@@ -310,14 +310,14 @@ public class UUabcVideoView extends UUvideo {
                 }
             };
 
-            for (int j = 0; j < jzDataSource.urlsMap.size(); j++) {
+            for (int j = 0; j < jzDataSource.getUrlsMap().size(); j++) {
                 String key = jzDataSource.getKeyFromDataSource(j);
                 TextView clarityItem = (TextView) View.inflate(getContext(), R.layout.jz_layout_clarity_item, null);
                 clarityItem.setText(key);
                 clarityItem.setTag(j);
                 layout.addView(clarityItem, j);
                 clarityItem.setOnClickListener(mQualityListener);
-                if (j == jzDataSource.currentUrlIndex) {
+                if (j == jzDataSource.getCurrentUrlIndex()) {
                     clarityItem.setTextColor(Color.parseColor("#fff85959"));
                 }
             }
@@ -330,7 +330,7 @@ public class UUabcVideoView extends UUvideo {
             int offsetY = clarity.getMeasuredHeight() / 3;
             clarityPopWindow.update(clarity, -offsetX, -offsetY, Math.round(layout.getMeasuredWidth() * 2), layout.getMeasuredHeight());
         } else if (i == R.id.retry_btn) {
-            if (jzDataSource.urlsMap.isEmpty() || jzDataSource.getCurrentUrl() == null) {
+            if (jzDataSource.getUrlsMap().isEmpty() || jzDataSource.getCurrentUrl() == null) {
                 Toast.makeText(getContext(), getResources().getString(R.string.no_url), Toast.LENGTH_SHORT).show();
                 return;
             }
