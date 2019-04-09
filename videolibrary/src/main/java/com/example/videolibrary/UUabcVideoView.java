@@ -274,7 +274,7 @@ public class UUabcVideoView extends UUvideo {
             if (currentState == CURRENT_STATE_NORMAL) {
                 if (!jzDataSource.getCurrentUrl().toString().startsWith("file") &&
                         !jzDataSource.getCurrentUrl().toString().startsWith("/") &&
-                        !UUUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                        !UUUtils.INSTANCE.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
                     showWifiDialog();
                     return;
                 }
@@ -336,7 +336,7 @@ public class UUabcVideoView extends UUvideo {
             }
             if (!jzDataSource.getCurrentUrl().toString().startsWith("file") && !
                     jzDataSource.getCurrentUrl().toString().startsWith("/") &&
-                    !UUUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                    !UUUtils.INSTANCE.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
                 showWifiDialog();
                 return;
             }
