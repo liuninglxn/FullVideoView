@@ -151,7 +151,7 @@ public class UUabcVideoView extends UUvideo {
         fullscreenButton.setImageResource(R.drawable.jz_shrink);
         backButton.setVisibility(View.VISIBLE);
         tinyBackImageView.setVisibility(View.INVISIBLE);
-        batteryTimeLayout.setVisibility(View.VISIBLE);
+        batteryTimeLayout.setVisibility(View.GONE);
         if (jzDataSource.getUrlsMap().size() == 1) {
             clarity.setVisibility(GONE);
         } else {
@@ -813,7 +813,6 @@ public class UUabcVideoView extends UUvideo {
     }
 
     public class DismissControlViewTimerTask extends TimerTask {
-
         @Override
         public void run() {
             dissmissControlView();

@@ -23,8 +23,9 @@ USE
 
 Step 1
 
+1）横屏全屏自动播放且无法还原小屏
      UUabcVideoView.setUp(VideoURL,"This is a title",UUabcVideoView.SCREEN_WINDOW_FULLSCREEN)
-
+     UUabcVideoView.fullScreen.visibility=View.GONE
      UUabcVideoView.backButton.setOnClickListener {
             ...
             finish()
@@ -32,6 +33,9 @@ Step 1
 
      UUabcVideoView.startButton.performClick()
 
+2）普通状态，可全屏、可设置视频封面
+     UUabcVideoView.thumbImageView.setImageResource(R.drawable.testimg)
+     UUabcVideoView.setUp(VideoURL , "This is a title" , UUvideo.SCREEN_NORMAL)
 
 Step 2
 
