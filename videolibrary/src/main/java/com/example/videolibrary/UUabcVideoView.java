@@ -730,10 +730,10 @@ public class UUabcVideoView extends UUvideo {
     @Override
     public void dismissProgressDialog() {
         super.dismissProgressDialog();
-        if (mProgressDialog != null) {
+        if (mProgressDialog != null&&mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
+            loadingProgressBar.setVisibility(VISIBLE);
         }
-        loadingProgressBar.setVisibility(VISIBLE);
     }
 
     @Override
