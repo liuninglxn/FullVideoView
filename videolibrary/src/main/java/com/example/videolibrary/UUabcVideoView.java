@@ -445,30 +445,25 @@ public class UUabcVideoView extends UUvideo {
     }
 
     public void onCLickUiToggleToClear() {
-        Log.e("loadingProgressBar",""+currentState);
         if (currentState == CURRENT_STATE_PREPARING) {
             if (bottomContainer.getVisibility() == View.VISIBLE) {
                 changeUiToPreparing();
             } else {
-                Log.e("loadingProgressBar","PREPARING");
             }
         } else if (currentState == CURRENT_STATE_PLAYING) {
             if (bottomContainer.getVisibility() == View.VISIBLE) {
                 changeUiToPlayingClear();
             } else {
-                Log.e("loadingProgressBar","PLAYING");
             }
         } else if (currentState == CURRENT_STATE_PAUSE) {
             if (bottomContainer.getVisibility() == View.VISIBLE) {
                 changeUiToPauseClear();
             } else {
-                Log.e("loadingProgressBar","PAUSE");
             }
         } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
             if (bottomContainer.getVisibility() == View.VISIBLE) {
                 changeUiToComplete();
             } else {
-                Log.e("loadingProgressBar","COMPLETE");
             }
         }else if (currentState == CURRENT_STATE_PLAYING_BUFFERING_START) {
             if (bottomContainer.getVisibility() == View.VISIBLE) {
@@ -738,6 +733,7 @@ public class UUabcVideoView extends UUvideo {
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
+        loadingProgressBar.setVisibility(VISIBLE);
     }
 
     @Override
