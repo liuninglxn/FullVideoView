@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.*;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import androidx.fragment.app.FragmentActivity;
@@ -213,7 +214,11 @@ public class UUabcVideoView extends UUvideo {
         changeUiToPauseShow();
         cancelDismissControlViewTimer();
     }
-
+    @Override
+    public void onStatePlaybackBufferingStart() {
+        super.onStatePlaybackBufferingStart();
+        changeUiToPlayingBufferingShow();
+    }
     @Override
     public void onStateError() {
         super.onStateError();
@@ -398,6 +403,12 @@ public class UUabcVideoView extends UUvideo {
             } else {
                 changeUiToPauseShow();
             }
+        }else if (currentState == CURRENT_STATE_PLAYING_BUFFERING_START) {
+            if (bottomContainer.getVisibility() == View.VISIBLE) {
+                changeUiToPlayingBufferingClear();
+            } else {
+                changeUiToPlayingBufferingShow();
+            }
         }
     }
 
@@ -434,24 +445,34 @@ public class UUabcVideoView extends UUvideo {
     }
 
     public void onCLickUiToggleToClear() {
+        Log.e("loadingProgressBar",""+currentState);
         if (currentState == CURRENT_STATE_PREPARING) {
             if (bottomContainer.getVisibility() == View.VISIBLE) {
                 changeUiToPreparing();
             } else {
+                Log.e("loadingProgressBar","PREPARING");
             }
         } else if (currentState == CURRENT_STATE_PLAYING) {
             if (bottomContainer.getVisibility() == View.VISIBLE) {
                 changeUiToPlayingClear();
             } else {
+                Log.e("loadingProgressBar","PLAYING");
             }
         } else if (currentState == CURRENT_STATE_PAUSE) {
             if (bottomContainer.getVisibility() == View.VISIBLE) {
                 changeUiToPauseClear();
             } else {
+                Log.e("loadingProgressBar","PAUSE");
             }
         } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
             if (bottomContainer.getVisibility() == View.VISIBLE) {
                 changeUiToComplete();
+            } else {
+                Log.e("loadingProgressBar","COMPLETE");
+            }
+        }else if (currentState == CURRENT_STATE_PLAYING_BUFFERING_START) {
+            if (bottomContainer.getVisibility() == View.VISIBLE) {
+                changeUiToPlayingBufferingClear();
             } else {
             }
         }
@@ -507,7 +528,6 @@ public class UUabcVideoView extends UUvideo {
             case SCREEN_WINDOW_TINY:
                 break;
         }
-
     }
 
     public void changeUiToPlayingShow() {
@@ -580,6 +600,44 @@ public class UUabcVideoView extends UUvideo {
         }
 
     }
+
+
+    public void changeUiToPlayingBufferingShow() {
+        switch (currentScreen) {
+            case SCREEN_NORMAL:
+            case SCREEN_WINDOW_LIST:
+                setAllControlsVisiblity(View.VISIBLE, View.VISIBLE, View.INVISIBLE,
+                        View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
+                break;
+            case SCREEN_WINDOW_FULLSCREEN:
+                setAllControlsVisiblity(View.VISIBLE, View.VISIBLE, View.INVISIBLE,
+                        View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
+                break;
+            case SCREEN_WINDOW_TINY:
+                break;
+        }
+
+    }
+
+    public void changeUiToPlayingBufferingClear() {
+        switch (currentScreen) {
+            case SCREEN_NORMAL:
+            case SCREEN_WINDOW_LIST:
+                setAllControlsVisiblity(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE,
+                        View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
+                updateStartImage();
+                break;
+            case SCREEN_WINDOW_FULLSCREEN:
+                setAllControlsVisiblity(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE,
+                        View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
+                updateStartImage();
+                break;
+            case SCREEN_WINDOW_TINY:
+                break;
+        }
+
+    }
+
 
     public void changeUiToComplete() {
         switch (currentScreen) {

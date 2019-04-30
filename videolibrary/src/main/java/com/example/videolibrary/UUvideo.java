@@ -7,6 +7,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -44,6 +45,11 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     public static final int VIDEO_IMAGE_DISPLAY_TYPE_FILL_PARENT = 1;
     public static final int VIDEO_IMAGE_DISPLAY_TYPE_FILL_SCROP = 2;
     public static final int VIDEO_IMAGE_DISPLAY_TYPE_ORIGINAL = 3;
+
+    public static final int CURRENT_STATE_PLAYING_BUFFERING_START = 10;
+    public static int BACKUP_PLAYING_BUFFERING_STATE = -1;
+
+
     public static boolean TOOL_BAR_EXIST = true;
     public static int FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
     public static int NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
@@ -425,6 +431,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                         long duration = getDuration();
                         int progress = (int) (mSeekTimePosition * 100 / (duration == 0 ? 1 : duration));
                         progressBar.setProgress(progress);
+                        Log.e("UUVideoSeekBar","SeekTime:"+mSeekTimePosition+"progress:"+progress);
                     }
                     if (mChangeVolume) {
                         //change volume event
@@ -449,6 +456,8 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
 
     public void onPrepared() {
         Log.i(TAG, "onPrepared " + " [" + this.hashCode() + "] ");
+        if (currentState != CURRENT_STATE_PREPARING && currentState != CURRENT_STATE_PLAYING_BUFFERING_START)
+            return;
         onStatePrepared();
         onStatePlaying();
     }
@@ -473,6 +482,9 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                 break;
             case CURRENT_STATE_PAUSE:
                 onStatePause();
+                break;
+            case CURRENT_STATE_PLAYING_BUFFERING_START:
+                onStatePlaybackBufferingStart();
                 break;
             case CURRENT_STATE_ERROR:
                 onStateError();
@@ -508,6 +520,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         Log.i(TAG, "onStatePreparing " + " [" + this.hashCode() + "] ");
         currentState = CURRENT_STATE_PREPARING;
         resetProgressAndTime();
+        Log.e("UUVideoSeekBar","Preparing");
     }
 
     public void changeUrl(int urlMapIndex, long seekToInAdvance) {
@@ -538,12 +551,14 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                 mediaInterface.seekTo(position);
             }
         }
+        Log.e("UUVideoSeekBar","Prepared");
     }
 
     public void onStatePlaying() {
         Log.i(TAG, "onStatePlaying " + " [" + this.hashCode() + "] ");
         currentState = CURRENT_STATE_PLAYING;
         startProgressTimer();
+        Log.e("UUVideoSeekBar","Playing");
     }
 
     public void onStatePause() {
@@ -568,8 +583,26 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
 
     public void onInfo(int what, int extra) {
         Log.d(TAG, "onInfo what - " + what + " extra - " + extra);
+        if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
+            if (currentState == CURRENT_STATE_PLAYING_BUFFERING_START) return;
+            BACKUP_PLAYING_BUFFERING_STATE = currentState;
+            onStatePlaybackBufferingStart();
+            Log.d(TAG, "MEDIA_INFO_BUFFERING_START");
+        } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
+            if (BACKUP_PLAYING_BUFFERING_STATE != -1) {
+                if (currentState == CURRENT_STATE_PLAYING_BUFFERING_START) {
+                    setState(BACKUP_PLAYING_BUFFERING_STATE);
+                }
+                BACKUP_PLAYING_BUFFERING_STATE = -1;
+            }
+            Log.d(TAG, "MEDIA_INFO_BUFFERING_END");
+        }
     }
-
+    public void onStatePlaybackBufferingStart() {
+        Log.i(TAG, "onStatePlaybackBufferingStart " + " [" + this.hashCode() + "] ");
+        currentState = CURRENT_STATE_PLAYING_BUFFERING_START;
+        startProgressTimer();
+    }
     public void onError(int what, int extra) {
         Log.e(TAG, "onError " + what + " - " + extra + " [" + this.hashCode() + "] ");
         if (what != 38 && extra != -38 && what != -38 && extra != 38 && extra != -19) {
@@ -677,7 +710,6 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     }
 
     public void onProgress(int progress, long position, long duration) {
-//        Log.d(TAG, "onProgress: progress=" + progress + " position=" + position + " duration=" + duration);
         if (!mTouchingProgressBar) {
             if (seekToManulPosition != -1) {
                 if (seekToManulPosition > progress) {
