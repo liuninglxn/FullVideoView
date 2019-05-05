@@ -15,7 +15,7 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.liuninglxn:FullVideoView:V1.2'
+	        implementation 'com.github.liuninglxn:FullVideoView:V1.2.2'
 	}
 
 
@@ -25,7 +25,7 @@ Step 1
 
 1）横屏全屏自动播放且无法还原小屏
 
-     UUabcVideoView.setUp(VideoURL,"This is a title",UUabcVideoView.SCREEN_WINDOW_FULLSCREEN)
+     UUabcVideoView.setUp("This is a URL","This is a title",UUabcVideoView.SCREEN_WINDOW_FULLSCREEN)
 
      UUabcVideoView.fullScreen.visibility=View.GONE
 
@@ -40,7 +40,7 @@ Step 1
 
      UUabcVideoView.thumbImageView.setImageResource(R.drawable.testimg)
 
-     UUabcVideoView.setUp(VideoURL , "This is a title" , UUvideo.SCREEN_NORMAL)
+     UUabcVideoView.setUp("This is a URL" , "This is a title" , UUvideo.SCREEN_NORMAL)
 
 Step 2
 
