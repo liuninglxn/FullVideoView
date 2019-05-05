@@ -184,7 +184,7 @@ object UUUtils {
     @SuppressLint("NewApi")
     fun showSystemUI(context: Context) {
         val uiOptions = View.SYSTEM_UI_FLAG_VISIBLE
-        Toast.makeText(context, "fjdkslfdska $SYSTEM_UI", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(context, "fjdkslfdska $SYSTEM_UI", Toast.LENGTH_SHORT).show()
         UUUtils.getWindow(context).decorView.systemUiVisibility = SYSTEM_UI
     }
 

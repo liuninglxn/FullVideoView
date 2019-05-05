@@ -1,4 +1,5 @@
 package com.example.videolibrary;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.*;
@@ -53,6 +54,7 @@ public class UUabcVideoView extends UUvideo {
     protected Dialog mBrightnessDialog;
     protected ProgressBar mDialogBrightnessProgressBar;
     protected TextView mDialogBrightnessTextView;
+    protected int mPlayState;
     private BroadcastReceiver battertReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -177,12 +179,16 @@ public class UUabcVideoView extends UUvideo {
     public void onStateNormal() {
         super.onStateNormal();
         changeUiToNormal();
+        mPlayState=0;
+        Log.e("PlayState","0");
     }
 
     @Override
     public void onStatePreparing() {
         super.onStatePreparing();
         changeUiToPreparing();
+        Log.e("PlayState","1");
+        mPlayState=1;
     }
 
     @Override
@@ -206,6 +212,9 @@ public class UUabcVideoView extends UUvideo {
     public void onStatePlaying() {
         super.onStatePlaying();
         changeUiToPlayingClear();
+        loadingProgressBar.setVisibility(INVISIBLE);
+        Log.e("PlayState","2");
+        mPlayState=2;
     }
 
     @Override
@@ -213,16 +222,27 @@ public class UUabcVideoView extends UUvideo {
         super.onStatePause();
         changeUiToPauseShow();
         cancelDismissControlViewTimer();
+        Log.e("PlayState","3");
+        mPlayState=3;
     }
     @Override
     public void onStatePlaybackBufferingStart() {
         super.onStatePlaybackBufferingStart();
         changeUiToPlayingBufferingShow();
+        Log.e("PlayState","4");
+        mPlayState=4;
+    }
+    @Override
+    public void onStatePlaybackBufferingEnd() {
+        super.onStatePlaybackBufferingEnd();
+        loadingProgressBar.setVisibility(INVISIBLE);
     }
     @Override
     public void onStateError() {
         super.onStateError();
         changeUiToError();
+        Log.e("PlayState","5");
+        mPlayState=5;
     }
 
     @Override
@@ -231,6 +251,8 @@ public class UUabcVideoView extends UUvideo {
         changeUiToComplete();
         cancelDismissControlViewTimer();
         bottomProgressBar.setProgress(100);
+        Log.e("PlayState","6");
+        mPlayState=6;
     }
 
     @Override
@@ -478,6 +500,11 @@ public class UUabcVideoView extends UUvideo {
     public void onProgress(int progress, long position, long duration) {
         super.onProgress(progress, position, duration);
         if (progress != 0) bottomProgressBar.setProgress(progress);
+        Log.e("PlayStateProgress",""+progress);
+        if (mPlayState==4)
+            loadingProgressBar.setVisibility(VISIBLE);
+        else
+            loadingProgressBar.setVisibility(INVISIBLE);
     }
 
     @Override
@@ -619,12 +646,12 @@ public class UUabcVideoView extends UUvideo {
             case SCREEN_NORMAL:
             case SCREEN_WINDOW_LIST:
                 setAllControlsVisiblity(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE,
-                        View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
+                        View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
                 updateStartImage();
                 break;
             case SCREEN_WINDOW_FULLSCREEN:
                 setAllControlsVisiblity(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE,
-                        View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
+                        View.VISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
                 updateStartImage();
                 break;
             case SCREEN_WINDOW_TINY:
@@ -669,7 +696,6 @@ public class UUabcVideoView extends UUvideo {
             case SCREEN_WINDOW_TINY:
                 break;
         }
-
     }
 
     public void setAllControlsVisiblity(int topCon, int bottomCon, int startBtn, int loadingPro,
@@ -732,10 +758,14 @@ public class UUabcVideoView extends UUvideo {
         super.dismissProgressDialog();
         if (mProgressDialog != null&&mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
-            loadingProgressBar.setVisibility(VISIBLE);
+            if (mPlayState==4)
+                loadingProgressBar.setVisibility(VISIBLE);
+            else
+                loadingProgressBar.setVisibility(INVISIBLE);
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void showVolumeDialog(float deltaY, int volumePercent) {
         super.showVolumeDialog(deltaY, volumePercent);

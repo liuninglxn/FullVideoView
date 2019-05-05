@@ -16,6 +16,7 @@ import android.widget.*;
 
 import java.lang.reflect.Constructor;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,6 +48,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     public static final int VIDEO_IMAGE_DISPLAY_TYPE_ORIGINAL = 3;
 
     public static final int CURRENT_STATE_PLAYING_BUFFERING_START = 10;
+    public static final int CURRENT_STATE_PLAYING_BUFFERING_END = 11;
     public static int BACKUP_PLAYING_BUFFERING_STATE = -1;
 
 
@@ -546,7 +548,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
             mediaInterface.seekTo(seekToInAdvance);
             seekToInAdvance = 0;
         } else {
-            long position = UUUtils.INSTANCE.getSavedProgress(getContext(), jzDataSource.getCurrentUrl());
+            long position = UUUtils.INSTANCE.getSavedProgress(getContext(), Objects.requireNonNull(jzDataSource.getCurrentUrl()));
             if (position != 0) {
                 mediaInterface.seekTo(position);
             }
@@ -595,6 +597,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                 }
                 BACKUP_PLAYING_BUFFERING_STATE = -1;
             }
+            onStatePlaybackBufferingEnd();
             Log.d(TAG, "MEDIA_INFO_BUFFERING_END");
         }
     }
@@ -602,6 +605,9 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         Log.i(TAG, "onStatePlaybackBufferingStart " + " [" + this.hashCode() + "] ");
         currentState = CURRENT_STATE_PLAYING_BUFFERING_START;
         startProgressTimer();
+    }
+    public void onStatePlaybackBufferingEnd() {
+        Log.i(TAG, "onStatePlaybackBufferingEnd " + " [" + this.hashCode() + "] ");
     }
     public void onError(int what, int extra) {
         Log.e(TAG, "onError " + what + " - " + extra + " [" + this.hashCode() + "] ");

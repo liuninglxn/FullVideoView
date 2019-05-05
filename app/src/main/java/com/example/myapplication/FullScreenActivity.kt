@@ -18,7 +18,8 @@ class FullScreenActivity : AppCompatActivity() {
         }
         setContentView(R.layout.activity_fullscreen)
         full_videoplayer.setUp(
-            "http://jzvd.nathen.cn/342a5f7ef6124a4a8faf00e738b8bee4/cf6d9db0bd4d41f59d09ea0a81e918fd-5287d2089db37e62345123a1be272f8b.mp4",
+            "http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4",
+//            "https://sishu-qiniu.uuabc.com/o_1d4n2fghd1tn81sr9uc61glr1kcfi.mp4",//
             "This is a title",
             UUabcVideoView.SCREEN_WINDOW_FULLSCREEN
         )

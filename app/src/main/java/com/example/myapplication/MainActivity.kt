@@ -16,7 +16,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         videoplayer.thumbImageView.setImageResource(R.drawable.testimg)
         videoplayer.batteryLevel.visibility= View.GONE
-        videoplayer.setUp("http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4"
+        videoplayer.setUp(
+            "http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4"
+//            "https://sishu-qiniu.uuabc.com/o_1d4n2fghd1tn81sr9uc61glr1kcfi.mp4"//mp4
             , "This is a title" , UUvideo.SCREEN_NORMAL)
 
         button.setOnClickListener {
@@ -24,7 +26,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         button2.setOnClickListener {
-            UUabcVideoView.startFullscreenDirectly(this, UUabcVideoView::class.java, "http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4", "This is a title")
+            UUabcVideoView.startFullscreenDirectly(this, UUabcVideoView::class.java,
+//                "http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4"
+                "https://sishu-qiniu.uuabc.com/o_1d4n2fghd1tn81sr9uc61glr1kcfi.mp4"//
+                , "This is a title")
         }
     }
 
