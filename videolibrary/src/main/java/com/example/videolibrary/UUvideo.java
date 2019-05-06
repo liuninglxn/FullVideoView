@@ -216,12 +216,12 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         ViewGroup vp = (ViewGroup) UUUtils.INSTANCE.scanForActivity(context).getWindow().getDecorView();
         try {
             Constructor<UUvideo> constructor = _class.getConstructor(Context.class);
-            final UUvideo jzvd = constructor.newInstance(context);
+            final UUvideo uuvd = constructor.newInstance(context);
             LayoutParams lp = new LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            vp.addView(jzvd, lp);
-            jzvd.setUp(uuDataSource, UUabcVideoView.SCREEN_WINDOW_FULLSCREEN);
-            jzvd.startButton.performClick();
+            vp.addView(uuvd, lp);
+            uuvd.setUp(uuDataSource, UUabcVideoView.SCREEN_WINDOW_FULLSCREEN);
+            uuvd.startButton.performClick();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (Exception e) {

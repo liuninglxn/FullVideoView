@@ -14,11 +14,11 @@ public abstract class UUMediaInterface implements TextureView.SurfaceTextureList
     public HandlerThread mMediaHandlerThread;
     public Handler mMediaHandler;
     public Handler handler;
-    public UUvideo jzvd;
+    public UUvideo uuVideoView;
 
 
-    public UUMediaInterface(UUvideo jzvd) {
-        this.jzvd = jzvd;
+    public UUMediaInterface(UUvideo uuvd) {
+        this.uuVideoView = uuvd;
     }
 
     public abstract void start();

@@ -12,7 +12,7 @@ import androidx.annotation.RequiresApi
 /**
  * 实现系统的播放引擎
  */
-class UUMediaSystem(jzvd: UUvideo) : UUMediaInterface(jzvd), MediaPlayer.OnPreparedListener,
+class UUMediaSystem(uuVideoView: UUvideo) : UUMediaInterface(uuVideoView), MediaPlayer.OnPreparedListener,
     MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener,
     MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnVideoSizeChangedListener {
 
@@ -29,7 +29,7 @@ class UUMediaSystem(jzvd: UUvideo) : UUMediaInterface(jzvd), MediaPlayer.OnPrepa
             try {
                 mediaPlayer = MediaPlayer()
                 mediaPlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
-                mediaPlayer!!.isLooping = jzvd.jzDataSource.looping
+                mediaPlayer!!.isLooping = uuVideoView.jzDataSource.looping
                 mediaPlayer!!.setOnPreparedListener(this@UUMediaSystem)
                 mediaPlayer!!.setOnCompletionListener(this@UUMediaSystem)
                 mediaPlayer!!.setOnBufferingUpdateListener(this@UUMediaSystem)
@@ -40,9 +40,9 @@ class UUMediaSystem(jzvd: UUvideo) : UUMediaInterface(jzvd), MediaPlayer.OnPrepa
                 mediaPlayer!!.setOnVideoSizeChangedListener(this@UUMediaSystem)
                 val clazz = MediaPlayer::class.java
                 val method = clazz.getDeclaredMethod("setDataSource", String::class.java, Map::class.java)
-                method.invoke(mediaPlayer, jzvd.jzDataSource.currentUrl.toString(), jzvd.jzDataSource.headerMap)
+                method.invoke(mediaPlayer, uuVideoView.jzDataSource.currentUrl.toString(), uuVideoView.jzDataSource.headerMap)
                 mediaPlayer!!.prepareAsync()
-                mediaPlayer!!.setSurface(Surface(jzvd.textureView.surfaceTexture))
+                mediaPlayer!!.setSurface(Surface(uuVideoView.textureView.surfaceTexture))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -114,46 +114,46 @@ class UUMediaSystem(jzvd: UUvideo) : UUMediaInterface(jzvd), MediaPlayer.OnPrepa
 
     override fun onPrepared(mediaPlayer: MediaPlayer) {
         mediaPlayer.start()
-        if (jzvd.jzDataSource.currentUrl.toString().toLowerCase().contains("mp3") || jzvd.jzDataSource.currentUrl.toString().toLowerCase().contains(
+        if (uuVideoView.jzDataSource.currentUrl.toString().toLowerCase().contains("mp3") || uuVideoView.jzDataSource.currentUrl.toString().toLowerCase().contains(
                 "wav"
             )
         ) {
-            handler.post { jzvd.onPrepared() }
+            handler.post { uuVideoView.onPrepared() }
         }
     }
 
     override fun onCompletion(mediaPlayer: MediaPlayer) {
-        handler.post { jzvd.onAutoCompletion() }
+        handler.post { uuVideoView.onAutoCompletion() }
     }
 
     override fun onBufferingUpdate(mediaPlayer: MediaPlayer, percent: Int) {
-        handler.post { jzvd.setBufferProgress(percent) }
+        handler.post { uuVideoView.setBufferProgress(percent) }
     }
 
     override fun onSeekComplete(mediaPlayer: MediaPlayer) {
-        handler.post { jzvd.onSeekComplete() }
+        handler.post { uuVideoView.onSeekComplete() }
     }
 
     override fun onError(mediaPlayer: MediaPlayer, what: Int, extra: Int): Boolean {
-        handler.post { jzvd.onError(what, extra) }
+        handler.post { uuVideoView.onError(what, extra) }
         return true
     }
 
     override fun onInfo(mediaPlayer: MediaPlayer, what: Int, extra: Int): Boolean {
         handler.post {
             if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                if (jzvd.currentState == UUvideo.CURRENT_STATE_PREPARING || jzvd.currentState == UUvideo.CURRENT_STATE_PREPARING_CHANGING_URL) {
-                    jzvd.onPrepared()
+                if (uuVideoView.currentState == UUvideo.CURRENT_STATE_PREPARING || uuVideoView.currentState == UUvideo.CURRENT_STATE_PREPARING_CHANGING_URL) {
+                    uuVideoView.onPrepared()
                 }
             } else {
-                jzvd.onInfo(what, extra)
+                uuVideoView.onInfo(what, extra)
             }
         }
         return false
     }
 
     override fun onVideoSizeChanged(mediaPlayer: MediaPlayer, width: Int, height: Int) {
-        handler.post { jzvd.onVideoSizeChanged(width, height) }
+        handler.post { uuVideoView.onVideoSizeChanged(width, height) }
     }
 
 
@@ -162,7 +162,7 @@ class UUMediaSystem(jzvd: UUvideo) : UUMediaInterface(jzvd), MediaPlayer.OnPrepa
             UUMediaInterface.SAVED_SURFACE = surface
             prepare()
         } else {
-            jzvd.textureView.surfaceTexture = UUMediaInterface.SAVED_SURFACE
+            uuVideoView.textureView.surfaceTexture = UUMediaInterface.SAVED_SURFACE
         }
     }
 

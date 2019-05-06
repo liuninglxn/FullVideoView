@@ -568,7 +568,6 @@ public class UUabcVideoView extends UUvideo {
             case SCREEN_WINDOW_TINY:
                 break;
         }
-
     }
 
     public void changeUiToPlayingClear() {
@@ -638,7 +637,6 @@ public class UUabcVideoView extends UUvideo {
             case SCREEN_WINDOW_TINY:
                 break;
         }
-
     }
 
     public void changeUiToPlayingBufferingClear() {
