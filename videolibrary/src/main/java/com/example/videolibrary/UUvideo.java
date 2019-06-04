@@ -297,26 +297,11 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                 return;
             }
             if (currentState == CURRENT_STATE_NORMAL) {
-                if (!jzDataSource.getCurrentUrl().toString().startsWith("file") && !
-                        jzDataSource.getCurrentUrl().toString().startsWith("/") &&
-                        !UUUtils.INSTANCE.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {//这个可以放到std中
-                    showWifiDialog();
-                    return;
-                }
-                startVideo();
+                normalStart();
             } else if (currentState == CURRENT_STATE_PLAYING) {
-                Log.d(TAG, "pauseVideo [" + this.hashCode() + "] ");
-                mediaInterface.pause();
-                if (mVideoStateListener!=null){
-                    mVideoStateListener.onPause();
-                }
-                onStatePause();
+                normalPause();
             } else if (currentState == CURRENT_STATE_PAUSE) {
-                mediaInterface.start();
-                onStatePlaying();
-                if (mVideoStateListener!=null){
-                    mVideoStateListener.onPauseToStart();
-                }
+                normalPauseToStart();
             } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
                 startVideo();
             }
@@ -331,6 +316,33 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                 gotoScreenFullscreen();
             }
         }
+    }
+
+    public void normalPauseToStart() {
+        mediaInterface.start();
+        onStatePlaying();
+        if (mVideoStateListener!=null){
+            mVideoStateListener.onPauseToStart();
+        }
+    }
+
+    public void normalPause() {
+        Log.d(TAG, "pauseVideo [" + this.hashCode() + "] ");
+        mediaInterface.pause();
+        if (mVideoStateListener!=null){
+            mVideoStateListener.onPause();
+        }
+        onStatePause();
+    }
+
+    public void normalStart(){
+        if (!jzDataSource.getCurrentUrl().toString().startsWith("file") && !
+                jzDataSource.getCurrentUrl().toString().startsWith("/") &&
+                !UUUtils.INSTANCE.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {//这个可以放到std中
+            showWifiDialog();
+            return;
+        }
+        startVideo();
     }
 
     @Override
