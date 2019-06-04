@@ -113,6 +113,7 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     protected float mGestureDownBrightness;
     protected long mSeekTimePosition;
     protected long gobakFullscreenTime = 0;
+    private VideoStateListener mVideoStateListener;
 
     public UUvideo(Context context) {
         super(context);
@@ -303,15 +304,27 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
                     return;
                 }
                 startVideo();
+                if (mVideoStateListener!=null){
+                    mVideoStateListener.onStart();
+                }
             } else if (currentState == CURRENT_STATE_PLAYING) {
                 Log.d(TAG, "pauseVideo [" + this.hashCode() + "] ");
                 mediaInterface.pause();
+                if (mVideoStateListener!=null){
+                    mVideoStateListener.onPause();
+                }
                 onStatePause();
             } else if (currentState == CURRENT_STATE_PAUSE) {
                 mediaInterface.start();
                 onStatePlaying();
+                if (mVideoStateListener!=null){
+                    mVideoStateListener.onPauseToStart();
+                }
             } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
                 startVideo();
+                if (mVideoStateListener!=null){
+                    mVideoStateListener.onStart();
+                }
             }
         } else if (i == R.id.fullscreen) {
             Log.i(TAG, "onClick fullscreen [" + this.hashCode() + "] ");
