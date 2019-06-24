@@ -9,16 +9,15 @@ import com.example.videolibrary.UUvideo
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        videoplayer.thumbImageView.setImageResource(R.drawable.testimg)
+        videoplayer.thumbImageView.setImageResource(R.drawable.ic_teacher_info_bg)
         videoplayer.batteryLevel.visibility= View.GONE
         videoplayer.setUp(
-            "http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4"
-//            "https://sishu-qiniu.uuabc.com/o_1d4n2fghd1tn81sr9uc61glr1kcfi.mp4"//mp4
+            "https://sishu-qiniu.uuabc.com/o_1d4n2fghd1tn81sr9uc61glr1kcfi.mp4"//mp4
             , "This is a title" , UUvideo.SCREEN_NORMAL)
 
         button.setOnClickListener {
@@ -27,11 +26,11 @@ class MainActivity : AppCompatActivity() {
         }
         button2.setOnClickListener {
             UUabcVideoView.startFullscreenDirectly(this, UUabcVideoView::class.java,
-//                "http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4"
-                "https://sishu-qiniu.uuabc.com/o_1d4n2fghd1tn81sr9uc61glr1kcfi.mp4"//
+                "http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4"
                 , "This is a title")
         }
     }
+
 
     override fun onBackPressed() {
         if (UUvideo.backPress()) {

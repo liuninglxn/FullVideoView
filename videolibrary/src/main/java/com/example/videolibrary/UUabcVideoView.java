@@ -312,7 +312,6 @@ public class UUabcVideoView extends UUvideo {
         } else if (i == R.id.surface_container) {
             startDismissControlViewTimer();
         } else if (i == R.id.back) {
-            Toast.makeText(getContext(),"返回",Toast.LENGTH_LONG).show();
             backPress();
         } else if (i == R.id.back_tiny) {
             backPress();
