@@ -15,6 +15,9 @@ import androidx.annotation.RequiresApi
 class UUMediaSystem(uuVideoView: UUvideo) : UUMediaInterface(uuVideoView), MediaPlayer.OnPreparedListener,
     MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener,
     MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnVideoSizeChangedListener {
+    override fun setSurface(surface: Surface?) {
+        mediaPlayer?.setSurface(surface)
+    }
 
     var mediaPlayer: MediaPlayer? = null
 
@@ -42,7 +45,8 @@ class UUMediaSystem(uuVideoView: UUvideo) : UUMediaInterface(uuVideoView), Media
                 val method = clazz.getDeclaredMethod("setDataSource", String::class.java, Map::class.java)
                 method.invoke(mediaPlayer, uuVideoView.jzDataSource.currentUrl.toString(), uuVideoView.jzDataSource.headerMap)
                 mediaPlayer!!.prepareAsync()
-                mediaPlayer!!.setSurface(Surface(uuVideoView.textureView.surfaceTexture))
+                mediaPlayer!!.setSurface(Surface(SAVED_SURFACE))
+                //mediaPlayer!!.setSurface(Surface(uuVideoView.textureView.surfaceTexture))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -76,6 +80,7 @@ class UUMediaSystem(uuVideoView: UUvideo) : UUMediaInterface(uuVideoView), Media
             val tmpHandlerThread = mMediaHandlerThread
             val tmpMediaPlayer = mediaPlayer
             mMediaHandler.post {
+                tmpMediaPlayer?.setSurface(null)
                 tmpMediaPlayer!!.release()//release就不能放到主线程里，界面会卡顿
                 tmpHandlerThread.quit()
             }

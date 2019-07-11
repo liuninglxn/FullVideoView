@@ -114,7 +114,7 @@ public class UUabcVideoView extends UUvideo {
         mRetryBtn.setOnClickListener(this);
     }
 
-    public void setUp(UUDataSource jzDataSource, int screen, UUMediaInterface jzMediaInterface) {
+    public void setUp(UUDataSource jzDataSource, int screen, Class jzMediaInterface) {
         super.setUp(jzDataSource, screen, jzMediaInterface);
         titleTextView.setText(jzDataSource.getTitle());
         setScreen(screen);

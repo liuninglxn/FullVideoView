@@ -15,6 +15,7 @@ import android.view.*;
 import android.widget.*;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Timer;
@@ -94,6 +95,9 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
     public UUDataSource jzDataSource;
     public int positionInList = -1;
     public int videoRotation = 0;
+
+    public Class mediaInterfaceClass;
+
     public UUMediaInterface mediaInterface;
     public UUTextureView textureView;
     public int seekToManulPosition = -1;
@@ -270,21 +274,21 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         setUp(new UUDataSource(url, title), screen);
     }
 
-    public void setUp(String url, String title, int screen, UUMediaInterface jzMediaInterface) {
-        setUp(new UUDataSource(url, title), screen, jzMediaInterface);
+    public void setUp(String url, String title, int screen, Class mediaInterfaceClass) {
+        setUp(new UUDataSource(url, title), screen, mediaInterfaceClass);
     }
 
     public void setUp(UUDataSource jzDataSource, int screen) {
-        setUp(jzDataSource, screen, new UUMediaSystem(this));
+        setUp(jzDataSource, screen, UUMediaSystem.class);
     }
 
-    public void setUp(UUDataSource jzDataSource, int screen, UUMediaInterface jzMediaInterface) {
+    public void setUp(UUDataSource jzDataSource, int screen, Class mediaInterfaceClass) {
         if ((System.currentTimeMillis() - gobakFullscreenTime) < 200) return;
 
         this.jzDataSource = jzDataSource;
         this.currentScreen = screen;
         onStateNormal();
-        mediaInterface = jzMediaInterface;//这个位置可能需要调整
+        this.mediaInterfaceClass = mediaInterfaceClass;//这个位置可能需要调整
     }
 
     @Override
@@ -470,6 +474,18 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         }
         Log.d(TAG, "startVideo [" + this.hashCode() + "] ");
         setCurrentJzvd(this);
+        try {
+            Constructor<UUMediaInterface> constructor = mediaInterfaceClass.getConstructor(UUvideo.class);
+            this.mediaInterface = constructor.newInstance(this);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
         addTextureView();
         AudioManager mAudioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
@@ -829,9 +845,27 @@ public abstract class UUvideo extends FrameLayout implements View.OnClickListene
         }
     }
 
+    public void cloneAJzvd(ViewGroup vg) {
+        try {
+            Constructor<UUvideo> constructor = (Constructor<UUvideo>) UUvideo.this.getClass().getConstructor(Context.class);
+            UUvideo jzvd = constructor.newInstance(getContext());
+            jzvd.setId(getId());
+            vg.addView(jzvd);
+            jzvd.setUp(jzDataSource.cloneMe(), SCREEN_NORMAL, mediaInterfaceClass);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
     public void gotoScreenFullscreen() {
         ViewGroup vg = (ViewGroup) getParent();
         vg.removeView(this);
+        cloneAJzvd(vg);
         CONTAINER_LIST.add(vg);
         vg = (ViewGroup) (UUUtils.INSTANCE.scanForActivity(getContext())).getWindow().getDecorView();//和他也没有关系
         vg.addView(this, new LayoutParams(
