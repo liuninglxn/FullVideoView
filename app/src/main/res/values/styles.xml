@@ -7,4 +7,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <style name="ExoMediaButton.Pause1">
+        <item name="android:src">@drawable/ic_player_pause</item>
+        <item name="android:contentDescription">@string/exo_controls_pause_description</item>
+    </style>
+    <style name="ExoMediaButton.Play1">
+        <item name="android:src">@drawable/ic_player_start</item>
+        <item name="android:contentDescription">@string/exo_controls_play_description</item>
+    </style>
 </resources>

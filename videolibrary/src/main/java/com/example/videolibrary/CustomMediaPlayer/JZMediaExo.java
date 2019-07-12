@@ -1,4 +1,4 @@
-package com.example.myapplication.CustomMediaPlayer;
+package com.example.videolibrary.CustomMediaPlayer;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -8,7 +8,7 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.view.Surface;
 
-import com.example.myapplication.R;
+import com.example.videolibrary.R;
 import com.example.videolibrary.UUMediaInterface;
 import com.example.videolibrary.UUvideo;
 import com.google.android.exoplayer2.C;
@@ -25,7 +25,6 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -40,9 +39,6 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 
 
-/**
- * Created by MinhDV on 5/3/18.
- */
 public class JZMediaExo extends UUMediaInterface implements Player.EventListener, VideoListener {
     private SimpleExoPlayer simpleExoPlayer;
     private Runnable callback;
@@ -86,17 +82,19 @@ public class JZMediaExo extends UUMediaInterface implements Player.EventListener
             simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector, loadControl);
             // Produces DataSource instances through which media data is loaded.
             DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
-                    Util.getUserAgent(context, context.getResources().getString(R.string.app_name)));
+                    Util.getUserAgent(context, "FullVideoView"));
 
             String currUrl = uuVideoView.jzDataSource.getCurrentUrl().toString();
             MediaSource videoSource;
-            if (currUrl.contains(".m3u8")) {
-                videoSource = new HlsMediaSource.Factory(dataSourceFactory)
-                        .createMediaSource(Uri.parse(currUrl), handler, null);
-            } else {
-                videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
-                        .createMediaSource(Uri.parse(currUrl));
-            }
+//            if (currUrl.contains(".m3u8")) {
+//                videoSource = new HlsMediaSource.Factory(dataSourceFactory)
+//                        .createMediaSource(Uri.parse(currUrl), handler, null);
+//            } else {
+//                videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+//                        .createMediaSource(Uri.parse(currUrl));
+//            }
+            videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(Uri.parse(currUrl));
             simpleExoPlayer.addVideoListener(this);
 
             Log.e(TAG, "URL Link = " + currUrl);

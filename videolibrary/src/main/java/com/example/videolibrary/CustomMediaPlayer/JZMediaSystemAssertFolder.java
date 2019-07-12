@@ -1,4 +1,4 @@
-package com.example.myapplication.CustomMediaPlayer;
+package com.example.videolibrary.CustomMediaPlayer;
 
 import android.content.res.AssetFileDescriptor;
 import android.graphics.SurfaceTexture;
@@ -16,7 +16,6 @@ import com.example.videolibrary.UUabcVideoView;
 import com.example.videolibrary.UUvideo;
 
 /**
- * Created by Nathen on 2017/11/8.
  * 实现系统的播放引擎
  */
 public class JZMediaSystemAssertFolder extends UUMediaInterface implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnVideoSizeChangedListener {

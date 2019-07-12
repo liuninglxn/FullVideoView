@@ -4,7 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.CustomMediaPlayer.JZMediaExo
+import com.example.videolibrary.CustomMediaPlayer.JZMediaExo
 import com.example.videolibrary.UUabcVideoView
 import com.example.videolibrary.UUvideo
 import kotlinx.android.synthetic.main.activity_fullscreen.*
