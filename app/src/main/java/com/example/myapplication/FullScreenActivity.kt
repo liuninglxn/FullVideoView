@@ -4,7 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.videolibrary.CustomMediaPlayer.JZMediaExo
+import com.example.myapplication.CustomMediaPlayer.JZMediaExo
 import com.example.videolibrary.UUabcVideoView
 import com.example.videolibrary.UUvideo
 import kotlinx.android.synthetic.main.activity_fullscreen.*
@@ -21,7 +21,7 @@ class FullScreenActivity : AppCompatActivity() {
         full_videoplayer.setUp(
             "https://courseware.uuabc.com/courseware_centent_1561864858147",
 //            "https://sishu-qiniu.uuabc.com/o_1d4n2fghd1tn81sr9uc61glr1kcfi.mp4",//
-            "This is a title",
+            "",
             UUabcVideoView.SCREEN_WINDOW_FULLSCREEN,
             JZMediaExo::class.java
         )

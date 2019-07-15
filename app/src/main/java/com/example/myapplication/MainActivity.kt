@@ -3,7 +3,7 @@ package com.example.myapplication
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import com.example.videolibrary.CustomMediaPlayer.JZMediaExo
+import com.example.myapplication.CustomMediaPlayer.JZMediaExo
 import com.example.videolibrary.UUabcVideoView
 import com.example.videolibrary.UUvideo
 import kotlinx.android.synthetic.main.activity_main.*
@@ -18,7 +18,7 @@ class MainActivity : BaseActivity(){
         videoplayer.batteryLevel.visibility= View.GONE
         videoplayer.setUp(
             "https://courseware.uuabc.com/courseware_centent_1561864858147"//mp4
-            , "This is a title" , UUvideo.SCREEN_NORMAL,JZMediaExo::class.java)
+            , "" , UUvideo.SCREEN_NORMAL, JZMediaExo::class.java)
 //        mExoPlayerView?.setDataSource("https://courseware.uuabc.com/courseware_centent_1561864858147")
         button.setOnClickListener {
             val intent = Intent(this,FullScreenActivity::class.java)

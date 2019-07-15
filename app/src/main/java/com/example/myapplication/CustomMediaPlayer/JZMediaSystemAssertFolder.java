@@ -1,4 +1,4 @@
-package com.example.videolibrary.CustomMediaPlayer;
+package com.example.myapplication.CustomMediaPlayer;
 
 import android.content.res.AssetFileDescriptor;
 import android.graphics.SurfaceTexture;
@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.view.Surface;
-
 import androidx.annotation.RequiresApi;
 import com.example.videolibrary.UUMediaInterface;
 import com.example.videolibrary.UUabcVideoView;
@@ -39,14 +38,14 @@ public class JZMediaSystemAssertFolder extends UUMediaInterface implements Media
                 mediaPlayer = new MediaPlayer();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.setLooping(uuVideoView.jzDataSource.getLooping());
-                mediaPlayer.setOnPreparedListener(JZMediaSystemAssertFolder.this);
-                mediaPlayer.setOnCompletionListener(JZMediaSystemAssertFolder.this);
-                mediaPlayer.setOnBufferingUpdateListener(JZMediaSystemAssertFolder.this);
+                mediaPlayer.setOnPreparedListener(this);
+                mediaPlayer.setOnCompletionListener(this);
+                mediaPlayer.setOnBufferingUpdateListener(this);
                 mediaPlayer.setScreenOnWhilePlaying(true);
-                mediaPlayer.setOnSeekCompleteListener(JZMediaSystemAssertFolder.this);
-                mediaPlayer.setOnErrorListener(JZMediaSystemAssertFolder.this);
-                mediaPlayer.setOnInfoListener(JZMediaSystemAssertFolder.this);
-                mediaPlayer.setOnVideoSizeChangedListener(JZMediaSystemAssertFolder.this);
+                mediaPlayer.setOnSeekCompleteListener(this);
+                mediaPlayer.setOnErrorListener(this);
+                mediaPlayer.setOnInfoListener(this);
+                mediaPlayer.setOnVideoSizeChangedListener(this);
 
                 //two lines are different
                 AssetFileDescriptor assetFileDescriptor = (AssetFileDescriptor) uuVideoView.jzDataSource.getCurrentUrl();
